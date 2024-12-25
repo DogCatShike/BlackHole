@@ -2,7 +2,8 @@
   "group-list": [
     "default",
     "Player",
-    "Entity"
+    "Entity",
+    "UI"
   ],
   "collision-matrix": [
     [
@@ -16,6 +17,12 @@
     [
       false,
       true,
+      false
+    ],
+    [
+      false,
+      false,
+      false,
       false
     ]
   ],

@@ -1,10 +1,3 @@
-// Learn cc.Class:
-//  - https://docs.cocos.com/creator/2.4/manual/en/scripting/class.html
-// Learn Attribute:
-//  - https://docs.cocos.com/creator/2.4/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - https://docs.cocos.com/creator/2.4/manual/en/scripting/life-cycle-callbacks.html
-
 cc.Class({
     extends: cc.Component,
 
@@ -12,6 +5,10 @@ cc.Class({
     {
         moveSpeed: 0,
         holeLevel: 0,
+
+        level1: false,
+        level2: false,
+        level3: false,
     },
 
     onLoad ()
@@ -97,6 +94,7 @@ cc.Class({
     onCollisionEnter: function (other, self)
     {
         const entity = other.node.getComponent("EntityManager");
+        var scaleNum = 0;
 
         if(this.holeLevel >= entity.entityID)
         {
@@ -104,22 +102,48 @@ cc.Class({
 
             if(other.node.name == "People")
             {
-                this.node.scale += 0.02;
+                scaleNum = 0.02;
             }
             else if(other.node.name == "Car")
             {
-                this.node.scale += 0.03;
+                scaleNum = 0.03;
             }
             else if(other.node.name == "Tree")
             {
-                this.node.scale += 0.05;
+                scaleNum = 0.05;
             }
             else if(other.node.name == "Build")
             {
-                this.node.scale += 0.1;
+                scaleNum = 0.1;
             }
 
-            cc.find("Canvas/GameManager").getComponent("GameManager").SetCameraZoom(this.node.scale);
+            this.node.scale += scaleNum;
+            cc.find("GameManager").getComponent("GameManager").SetCameraZoom(scaleNum / 10);
+            let uiManager = cc.find("Canvas/UIManager").getComponent("UIManager");
+
+            //#region 升级
+            if(this.node.scale >= 4 && this.level3 == false)
+            {
+                this.holeLevel++;
+                this.level3 = true;
+                uiManager.NextLevel(3);
+            }
+            if(this.node.scale >= 2 && this.level2 == false)
+            {
+                this.holeLevel++;
+                this.level2 = true;
+                uiManager.NextLevel(2);
+            }
+            if(this.node.scale >= 1.3 && this.level1 == false)
+            {
+                this.holeLevel++;
+                this.level1 = true;
+                uiManager.NextLevel(1);
+            }
+
+            cc.log(this.node.scale);
+            cc.log(this.holeLevel);
+            //#endregion
         }
     },
     //#endregion
@@ -128,5 +152,5 @@ cc.Class({
     {
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_DOWN, this.onkeydown, this);
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onkeyup, this);
-    },
+    }
 });
